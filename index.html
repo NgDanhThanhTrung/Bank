@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thông Tin Thanh Toán - Nguyễn Danh Thành Trung</title>
+    <title>Thanh Toán - Nguyễn Danh Thành Trung</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -25,10 +25,10 @@
         canvas { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
         
         .card {
-            width: 92%; max-width: 420px;
-            padding: 30px 20px;
-            background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border); border-radius: 30px;
+            width: 92%; max-width: 400px;
+            padding: 35px 20px;
+            background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--border); border-radius: 35px;
             box-shadow: 0 25px 50px rgba(0,0,0,0.6); text-align: center;
             animation: cardAppear 1s ease-out;
             will-change: transform;
@@ -40,48 +40,54 @@
         }
 
         .header { margin-bottom: 25px; }
-        .header i { font-size: 2.5rem; color: var(--cyan); margin-bottom: 10px; }
+        .header i { font-size: 2rem; color: var(--cyan); margin-bottom: 12px; filter: drop-shadow(0 0 8px var(--cyan)); }
+        
         h1 { 
-            font-family: 'Montserrat', sans-serif; font-size: 1.3rem;
+            font-family: 'Montserrat', sans-serif; font-size: 1.2rem;
+            letter-spacing: 1px;
             background: linear-gradient(to right, #fff, var(--cyan), #fff);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             background-size: 200% auto; animation: shine 4s linear infinite;
         }
 
-        .bank-list { display: grid; gap: 12px; }
+        .bank-list { display: grid; gap: 15px; }
 
         .bank-item {
-            display: flex; align-items: center; padding: 15px;
+            display: flex; align-items: center; padding: 12px 16px;
             background: rgba(255,255,255,0.03); border: 1px solid var(--border);
-            border-radius: 20px; cursor: pointer; transition: 0.3s;
-            position: relative; overflow: hidden;
+            border-radius: 20px; cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
         }
 
         .bank-item:hover {
-            background: rgba(255,255,255,0.07);
+            background: rgba(255,255,255,0.08);
             border-color: var(--cyan);
-            transform: translateX(5px);
+            transform: scale(1.02) translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 242, 254, 0.1);
         }
 
         .bank-logo {
-            width: 45px; height: 45px; border-radius: 12px;
-            display: grid; place-items: center; margin-right: 15px;
-            font-weight: 800; font-size: 0.8rem; text-align: center;
-            background: #fff; color: #000;
+            width: 48px; height: 48px; border-radius: 12px;
+            margin-right: 15px; flex-shrink: 0;
+            object-fit: cover;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            background: #fff;
         }
 
         .bank-info { text-align: left; flex: 1; }
-        .bank-name { font-size: 0.75rem; font-weight: 700; opacity: 0.6; text-transform: uppercase; }
-        .account-number { font-size: 1.1rem; font-weight: 600; color: var(--white); letter-spacing: 1px; }
+        .bank-name { font-size: 0.7rem; font-weight: 700; opacity: 0.5; text-transform: uppercase; letter-spacing: 0.5px; }
+        .account-number { font-size: 1.05rem; font-weight: 600; color: var(--white); margin-top: 2px; }
 
-        .copy-icon { font-size: 0.9rem; opacity: 0.3; }
+        .copy-icon { font-size: 0.8rem; opacity: 0.2; transition: 0.3s; }
+        .bank-item:hover .copy-icon { opacity: 0.8; color: var(--cyan); }
 
-        /* Toast thông báo */
         #toast {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: var(--cyan); color: #000; padding: 10px 20px;
-            border-radius: 50px; font-weight: 700; font-size: 0.8rem;
-            opacity: 0; transition: 0.3s; z-index: 100;
+            position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
+            background: var(--cyan); color: #010409; padding: 12px 25px;
+            border-radius: 50px; font-weight: 700; font-size: 0.85rem;
+            opacity: 0; transition: 0.4s; z-index: 1000;
+            box-shadow: 0 10px 20px rgba(0, 242, 254, 0.3);
+            pointer-events: none;
         }
 
         @keyframes shine { to { background-position: 200% center; } }
@@ -90,35 +96,35 @@
 <body>
 
     <canvas id="p"></canvas>
-    <div id="toast">Đã sao chép số tài khoản!</div>
+    <div id="toast">Đã sao chép vào bộ nhớ tạm!</div>
 
     <div class="card" id="c">
         <div class="header">
-            <i class="fa-solid fa-wallet"></i>
-            <h1>THÔNG TIN THANH TOÁN</h1>
+            <i class="fa-solid fa-shield-heart"></i>
+            <h1>PAYMENT INFO</h1>
         </div>
         
         <div class="bank-list">
-            <div class="bank-item" onclick="copy('0981506719')">
-                <div class="bank-logo" style="color: #1e40af;">MB</div>
+            <div class="bank-item" onclick="copy('SỐ_TK_MBV_CỦA_BẠN')">
+                <img src="https://img.mservice.com.vn/app/v2/img/pay_merchant/mbbank.png" alt="MBV" class="bank-logo" style="filter: hue-rotate(45deg);">
                 <div class="bank-info">
-                    <div class="bank-name">MB BANK</div>
+                    <div class="bank-name">MBV BANK</div>
+                    <div class="account-number">SỐ_TK_MBV_CỦA_BẠN</div>
+                </div>
+                <i class="fa-regular fa-copy copy-icon"></i>
+            </div>
+
+            <div class="bank-item" onclick="copy('0981506719')">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Logo_MB_Bank.svg/2560px-Logo_MB_Bank.svg.png" alt="MB Bank" class="bank-logo" style="object-fit: contain; padding: 4px;">
+                <div class="bank-info">
+                    <div class="bank-name">MB BANK (Quân Đội)</div>
                     <div class="account-number">0981506719</div>
                 </div>
                 <i class="fa-regular fa-copy copy-icon"></i>
             </div>
 
             <div class="bank-item" onclick="copy('0981506719')">
-                <div class="bank-logo" style="color: #0068FF; font-size: 0.6rem;">ZaloPay</div>
-                <div class="bank-info">
-                    <div class="bank-name">ZALOPAY</div>
-                    <div class="account-number">0981506719</div>
-                </div>
-                <i class="fa-regular fa-copy copy-icon"></i>
-            </div>
-
-            <div class="bank-item" onclick="copy('0981506719')">
-                <div class="bank-logo" style="background: #a50064; color: #fff;">MoMo</div>
+                <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="MoMo" class="bank-logo">
                 <div class="bank-info">
                     <div class="bank-name">VÍ MOMO</div>
                     <div class="account-number">0981506719</div>
@@ -127,7 +133,7 @@
             </div>
 
             <div class="bank-item" onclick="copy('0981506719')">
-                <div class="bank-logo" style="background: #ee4d2d; color: #fff; font-size: 0.5rem;">Shopee</div>
+                <img src="https://cdn.haitrieu.com/wp-content/uploads/2022/10/Logo-ShopeePay-V.png" alt="ShopeePay" class="bank-logo" style="object-fit: contain; padding: 5px;">
                 <div class="bank-info">
                     <div class="bank-name">SHOPEEPAY</div>
                     <div class="account-number">0981506719</div>
@@ -138,39 +144,44 @@
     </div>
 
     <script>
-        // Hiệu ứng hạt nền
         const canvas = document.getElementById('p'), ctx = canvas.getContext('2d'), card = document.getElementById('c');
         let dots = [];
         const init = () => {
             canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            dots = Array.from({length: 40}, () => ({
+            dots = Array.from({length: 35}, () => ({
                 x: Math.random() * canvas.width, y: Math.random() * canvas.height,
-                vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5
+                vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4
             }));
         }
         const anim = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "rgba(0, 242, 254, 0.3)";
+            ctx.fillStyle = "rgba(0, 242, 254, 0.2)";
+            ctx.beginPath();
             dots.forEach(d => {
                 d.x += d.vx; d.y += d.vy;
                 if(d.x < 0 || d.x > canvas.width) d.vx *= -1;
                 if(d.y < 0 || d.y > canvas.height) d.vy *= -1;
-                ctx.beginPath(); ctx.arc(d.x, d.y, 1.2, 0, 7); ctx.fill();
+                ctx.moveTo(d.x, d.y);
+                ctx.arc(d.x, d.y, 1.2, 0, 7);
             });
+            ctx.fill();
             requestAnimationFrame(anim);
         }
 
-        // Sao chép số tài khoản
         function copy(text) {
-            navigator.clipboard.writeText(text);
-            const toast = document.getElementById('toast');
-            toast.style.opacity = '1';
-            setTimeout(() => toast.style.opacity = '0', 2000);
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('toast');
+                toast.style.opacity = '1';
+                toast.style.transform = 'translateX(-50%) translateY(10px)';
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateX(-50%) translateY(0)';
+                }, 2000);
+            });
         }
 
-        // Hiệu ứng 3D Card
         window.onmousemove = e => {
-            let x = (window.innerWidth/2 - e.pageX)/25, y = (window.innerHeight/2 - e.pageY)/25;
+            let x = (window.innerWidth/2 - e.pageX)/30, y = (window.innerHeight/2 - e.pageY)/30;
             card.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
         }
         window.onmouseleave = () => card.style.transform = `rotateY(0deg) rotateX(0deg)`;
