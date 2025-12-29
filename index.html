@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông Tin Thanh Toán - Nguyễn Danh Thành Trung</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --cyan: #00f2fe; 
+            --white: #fff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+
+        body { 
+            background: radial-gradient(circle at 50% 0%, #0f172a, #020617);
+            color: var(--white); height: 100vh; display: grid; place-items: center;
+            overflow: hidden; perspective: 1000px;
+        }
+
+        canvas { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+        
+        .card {
+            width: 92%; max-width: 420px;
+            padding: 30px 20px;
+            background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border); border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6); text-align: center;
+            animation: cardAppear 1s ease-out;
+            will-change: transform;
+        }
+
+        @keyframes cardAppear {
+            from { opacity: 0; transform: scale(0.9) translateY(30px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .header { margin-bottom: 25px; }
+        .header i { font-size: 2.5rem; color: var(--cyan); margin-bottom: 10px; }
+        h1 { 
+            font-family: 'Montserrat', sans-serif; font-size: 1.3rem;
+            background: linear-gradient(to right, #fff, var(--cyan), #fff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-size: 200% auto; animation: shine 4s linear infinite;
+        }
+
+        .bank-list { display: grid; gap: 12px; }
+
+        .bank-item {
+            display: flex; align-items: center; padding: 15px;
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+            border-radius: 20px; cursor: pointer; transition: 0.3s;
+            position: relative; overflow: hidden;
+        }
+
+        .bank-item:hover {
+            background: rgba(255,255,255,0.07);
+            border-color: var(--cyan);
+            transform: translateX(5px);
+        }
+
+        .bank-logo {
+            width: 45px; height: 45px; border-radius: 12px;
+            display: grid; place-items: center; margin-right: 15px;
+            font-weight: 800; font-size: 0.8rem; text-align: center;
+            background: #fff; color: #000;
+        }
+
+        .bank-info { text-align: left; flex: 1; }
+        .bank-name { font-size: 0.75rem; font-weight: 700; opacity: 0.6; text-transform: uppercase; }
+        .account-number { font-size: 1.1rem; font-weight: 600; color: var(--white); letter-spacing: 1px; }
+
+        .copy-icon { font-size: 0.9rem; opacity: 0.3; }
+
+        /* Toast thông báo */
+        #toast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--cyan); color: #000; padding: 10px 20px;
+            border-radius: 50px; font-weight: 700; font-size: 0.8rem;
+            opacity: 0; transition: 0.3s; z-index: 100;
+        }
+
+        @keyframes shine { to { background-position: 200% center; } }
+    </style>
+</head>
+<body>
+
+    <canvas id="p"></canvas>
+    <div id="toast">Đã sao chép số tài khoản!</div>
+
+    <div class="card" id="c">
+        <div class="header">
+            <i class="fa-solid fa-wallet"></i>
+            <h1>THÔNG TIN THANH TOÁN</h1>
+        </div>
+        
+        <div class="bank-list">
+            <div class="bank-item" onclick="copy('0981506719')">
+                <div class="bank-logo" style="color: #1e40af;">MB</div>
+                <div class="bank-info">
+                    <div class="bank-name">MB BANK</div>
+                    <div class="account-number">0981506719</div>
+                </div>
+                <i class="fa-regular fa-copy copy-icon"></i>
+            </div>
+
+            <div class="bank-item" onclick="copy('0981506719')">
+                <div class="bank-logo" style="color: #0068FF; font-size: 0.6rem;">ZaloPay</div>
+                <div class="bank-info">
+                    <div class="bank-name">ZALOPAY</div>
+                    <div class="account-number">0981506719</div>
+                </div>
+                <i class="fa-regular fa-copy copy-icon"></i>
+            </div>
+
+            <div class="bank-item" onclick="copy('0981506719')">
+                <div class="bank-logo" style="background: #a50064; color: #fff;">MoMo</div>
+                <div class="bank-info">
+                    <div class="bank-name">VÍ MOMO</div>
+                    <div class="account-number">0981506719</div>
+                </div>
+                <i class="fa-regular fa-copy copy-icon"></i>
+            </div>
+
+            <div class="bank-item" onclick="copy('0981506719')">
+                <div class="bank-logo" style="background: #ee4d2d; color: #fff; font-size: 0.5rem;">Shopee</div>
+                <div class="bank-info">
+                    <div class="bank-name">SHOPEEPAY</div>
+                    <div class="account-number">0981506719</div>
+                </div>
+                <i class="fa-regular fa-copy copy-icon"></i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Hiệu ứng hạt nền
+        const canvas = document.getElementById('p'), ctx = canvas.getContext('2d'), card = document.getElementById('c');
+        let dots = [];
+        const init = () => {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            dots = Array.from({length: 40}, () => ({
+                x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5
+            }));
+        }
+        const anim = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "rgba(0, 242, 254, 0.3)";
+            dots.forEach(d => {
+                d.x += d.vx; d.y += d.vy;
+                if(d.x < 0 || d.x > canvas.width) d.vx *= -1;
+                if(d.y < 0 || d.y > canvas.height) d.vy *= -1;
+                ctx.beginPath(); ctx.arc(d.x, d.y, 1.2, 0, 7); ctx.fill();
+            });
+            requestAnimationFrame(anim);
+        }
+
+        // Sao chép số tài khoản
+        function copy(text) {
+            navigator.clipboard.writeText(text);
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            setTimeout(() => toast.style.opacity = '0', 2000);
+        }
+
+        // Hiệu ứng 3D Card
+        window.onmousemove = e => {
+            let x = (window.innerWidth/2 - e.pageX)/25, y = (window.innerHeight/2 - e.pageY)/25;
+            card.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+        }
+        window.onmouseleave = () => card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+
+        window.onresize = init;
+        init(); anim();
+    </script>
+</body>
+</html>
