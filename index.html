@@ -55,7 +55,7 @@
         .bank-item {
             display: flex; align-items: center; padding: 12px 16px;
             background: rgba(255,255,255,0.03); border: 1px solid var(--border);
-            border-radius: 20px; cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 20px; cursor: pointer; transition: 0.3s;
             position: relative;
         }
 
@@ -65,31 +65,26 @@
             transform: scale(1.02) translateX(5px);
         }
 
-        .bank-logo {
+        /* Style cho logo dạng chữ */
+        .bank-logo-text {
             width: 48px; height: 48px; border-radius: 12px;
             margin-right: 15px; flex-shrink: 0;
-            object-fit: cover; background: #fff;
+            display: grid; place-items: center;
+            font-weight: 800; font-size: 0.8rem;
+            background: #fff;
+        }
+
+        .bank-logo-img {
+            width: 48px; height: 48px; border-radius: 12px;
+            margin-right: 15px; flex-shrink: 0;
+            object-fit: contain; background: #fff; padding: 5px;
         }
 
         .bank-info { text-align: left; flex: 1; }
         .bank-name { font-size: 0.7rem; font-weight: 700; opacity: 0.5; text-transform: uppercase; }
-        .account-number { font-size: 1rem; font-weight: 600; color: var(--white); margin-top: 2px; }
+        .account-number { font-size: 1.05rem; font-weight: 600; color: var(--white); margin-top: 2px; }
 
-        .copy-icon { font-size: 0.8rem; opacity: 0.2; transition: 0.3s; }
-        .bank-item:hover .copy-icon { opacity: 0.8; color: var(--cyan); }
-
-        /* Modal hiển thị mã QR */
-        #qr-modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-            display: none; place-items: center; z-index: 2000;
-            backdrop-filter: blur(10px);
-        }
-        .modal-content {
-            background: #fff; padding: 20px; border-radius: 25px;
-            max-width: 300px; text-align: center; color: #000;
-        }
-        .modal-content img { width: 100%; border-radius: 15px; }
-        .modal-content p { margin-top: 15px; font-weight: 700; color: #1e40af; }
+        .copy-icon { font-size: 0.8rem; opacity: 0.2; }
 
         #toast {
             position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
@@ -106,23 +101,15 @@
     <canvas id="p"></canvas>
     <div id="toast">Đã sao chép vào bộ nhớ tạm!</div>
 
-    <div id="qr-modal" onclick="closeQR()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <img id="qr-img" src="" alt="QR Code">
-            <p id="qr-bank-name"></p>
-            <button onclick="closeQR()" style="margin-top:15px; border:none; background:#eee; padding:8px 20px; border-radius:10px; cursor:pointer;">Đóng</button>
-        </div>
-    </div>
-
     <div class="card" id="c">
         <div class="header">
-            <i class="fa-solid fa-credit-card"></i>
+            <i class="fa-solid fa-wallet"></i>
             <h1>PAYMENT INFO</h1>
         </div>
         
         <div class="bank-list">
-            <div class="bank-item" onclick="handleAction('538888888888', 'MBV BANK', 'https://api.vietqr.io/image/970422-538888888888-HjA3P8q.jpg?accountName=NGUYEN%20DANH%20THANH%20TRUNG')">
-                <img src="https://img.mservice.com.vn/app/v2/img/pay_merchant/mbbank.png" alt="MBV" class="bank-logo" style="filter: hue-rotate(45deg);">
+            <div class="bank-item" onclick="copy('538888888888')">
+                <div class="bank-logo-text" style="color: #0052cc; background: linear-gradient(135deg, #fff, #e6f0ff);">MBV</div>
                 <div class="bank-info">
                     <div class="bank-name">MBV BANK</div>
                     <div class="account-number">5388 8888 8888</div>
@@ -130,8 +117,8 @@
                 <i class="fa-regular fa-copy copy-icon"></i>
             </div>
 
-            <div class="bank-item" onclick="handleAction('56002005032008', 'MB BANK', 'https://api.vietqr.io/image/970422-56002005032008-HjA3P8q.jpg?accountName=NGUYEN%20DANH%20THANH%20TRUNG')">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Logo_MB_Bank.svg/2560px-Logo_MB_Bank.svg.png" alt="MB Bank" class="bank-logo" style="object-fit: contain; padding: 4px;">
+            <div class="bank-item" onclick="copy('56002005032008')">
+                <div class="bank-logo-text" style="color: #1e40af;">MB</div>
                 <div class="bank-info">
                     <div class="bank-name">MB BANK</div>
                     <div class="account-number">56002005032008</div>
@@ -140,7 +127,7 @@
             </div>
 
             <div class="bank-item" onclick="copy('0981506719')">
-                <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="MoMo" class="bank-logo">
+                <div class="bank-logo-text" style="background: #a50064; color: #fff;">MoMo</div>
                 <div class="bank-info">
                     <div class="bank-name">VÍ MOMO</div>
                     <div class="account-number">0981506719</div>
@@ -149,7 +136,7 @@
             </div>
 
             <div class="bank-item" onclick="copy('0981506719')">
-                <img src="https://cdn.haitrieu.com/wp-content/uploads/2022/10/Logo-ShopeePay-V.png" alt="ShopeePay" class="bank-logo" style="object-fit: contain; padding: 5px;">
+                <img src="https://cdn.haitrieu.com/wp-content/uploads/2022/10/Logo-ShopeePay-V.png" alt="ShopeePay" class="bank-logo-img">
                 <div class="bank-info">
                     <div class="bank-name">SHOPEEPAY</div>
                     <div class="account-number">0981506719</div>
@@ -160,24 +147,6 @@
     </div>
 
     <script>
-        // Xử lý sao chép và hiện QR cho ngân hàng
-        function handleAction(stk, bankName, qrUrl) {
-            copy(stk);
-            setTimeout(() => {
-                showQR(qrUrl, bankName);
-            }, 500);
-        }
-
-        function showQR(url, name) {
-            document.getElementById('qr-img').src = url;
-            document.getElementById('qr-bank-name').innerText = name;
-            document.getElementById('qr-modal').style.display = 'grid';
-        }
-
-        function closeQR() {
-            document.getElementById('qr-modal').style.display = 'none';
-        }
-
         function copy(text) {
             navigator.clipboard.writeText(text).then(() => {
                 const toast = document.getElementById('toast');
@@ -186,7 +155,7 @@
             });
         }
 
-        // --- Giữ nguyên logic Canvas và 3D Card ---
+        // Logic Background & 3D Card
         const canvas = document.getElementById('p'), ctx = canvas.getContext('2d'), card = document.getElementById('c');
         let dots = [];
         const init = () => {
