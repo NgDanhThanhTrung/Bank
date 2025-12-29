@@ -63,31 +63,39 @@
             background: rgba(255,255,255,0.08);
             border-color: var(--cyan);
             transform: scale(1.02) translateX(5px);
-            box-shadow: 0 5px 15px rgba(0, 242, 254, 0.1);
         }
 
         .bank-logo {
             width: 48px; height: 48px; border-radius: 12px;
             margin-right: 15px; flex-shrink: 0;
-            object-fit: cover;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            background: #fff;
+            object-fit: cover; background: #fff;
         }
 
         .bank-info { text-align: left; flex: 1; }
-        .bank-name { font-size: 0.7rem; font-weight: 700; opacity: 0.5; text-transform: uppercase; letter-spacing: 0.5px; }
-        .account-number { font-size: 1.05rem; font-weight: 600; color: var(--white); margin-top: 2px; }
+        .bank-name { font-size: 0.7rem; font-weight: 700; opacity: 0.5; text-transform: uppercase; }
+        .account-number { font-size: 1rem; font-weight: 600; color: var(--white); margin-top: 2px; }
 
         .copy-icon { font-size: 0.8rem; opacity: 0.2; transition: 0.3s; }
         .bank-item:hover .copy-icon { opacity: 0.8; color: var(--cyan); }
+
+        /* Modal hiển thị mã QR */
+        #qr-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            display: none; place-items: center; z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+        .modal-content {
+            background: #fff; padding: 20px; border-radius: 25px;
+            max-width: 300px; text-align: center; color: #000;
+        }
+        .modal-content img { width: 100%; border-radius: 15px; }
+        .modal-content p { margin-top: 15px; font-weight: 700; color: #1e40af; }
 
         #toast {
             position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
             background: var(--cyan); color: #010409; padding: 12px 25px;
             border-radius: 50px; font-weight: 700; font-size: 0.85rem;
             opacity: 0; transition: 0.4s; z-index: 1000;
-            box-shadow: 0 10px 20px rgba(0, 242, 254, 0.3);
-            pointer-events: none;
         }
 
         @keyframes shine { to { background-position: 200% center; } }
@@ -98,27 +106,35 @@
     <canvas id="p"></canvas>
     <div id="toast">Đã sao chép vào bộ nhớ tạm!</div>
 
+    <div id="qr-modal" onclick="closeQR()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img id="qr-img" src="" alt="QR Code">
+            <p id="qr-bank-name"></p>
+            <button onclick="closeQR()" style="margin-top:15px; border:none; background:#eee; padding:8px 20px; border-radius:10px; cursor:pointer;">Đóng</button>
+        </div>
+    </div>
+
     <div class="card" id="c">
         <div class="header">
-            <i class="fa-solid fa-shield-heart"></i>
+            <i class="fa-solid fa-credit-card"></i>
             <h1>PAYMENT INFO</h1>
         </div>
         
         <div class="bank-list">
-            <div class="bank-item" onclick="copy('SỐ_TK_MBV_CỦA_BẠN')">
+            <div class="bank-item" onclick="handleAction('538888888888', 'MBV BANK', 'https://api.vietqr.io/image/970422-538888888888-HjA3P8q.jpg?accountName=NGUYEN%20DANH%20THANH%20TRUNG')">
                 <img src="https://img.mservice.com.vn/app/v2/img/pay_merchant/mbbank.png" alt="MBV" class="bank-logo" style="filter: hue-rotate(45deg);">
                 <div class="bank-info">
                     <div class="bank-name">MBV BANK</div>
-                    <div class="account-number">SỐ_TK_MBV_CỦA_BẠN</div>
+                    <div class="account-number">5388 8888 8888</div>
                 </div>
                 <i class="fa-regular fa-copy copy-icon"></i>
             </div>
 
-            <div class="bank-item" onclick="copy('0981506719')">
+            <div class="bank-item" onclick="handleAction('56002005032008', 'MB BANK', 'https://api.vietqr.io/image/970422-56002005032008-HjA3P8q.jpg?accountName=NGUYEN%20DANH%20THANH%20TRUNG')">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Logo_MB_Bank.svg/2560px-Logo_MB_Bank.svg.png" alt="MB Bank" class="bank-logo" style="object-fit: contain; padding: 4px;">
                 <div class="bank-info">
-                    <div class="bank-name">MB BANK (Quân Đội)</div>
-                    <div class="account-number">0981506719</div>
+                    <div class="bank-name">MB BANK</div>
+                    <div class="account-number">56002005032008</div>
                 </div>
                 <i class="fa-regular fa-copy copy-icon"></i>
             </div>
@@ -144,6 +160,33 @@
     </div>
 
     <script>
+        // Xử lý sao chép và hiện QR cho ngân hàng
+        function handleAction(stk, bankName, qrUrl) {
+            copy(stk);
+            setTimeout(() => {
+                showQR(qrUrl, bankName);
+            }, 500);
+        }
+
+        function showQR(url, name) {
+            document.getElementById('qr-img').src = url;
+            document.getElementById('qr-bank-name').innerText = name;
+            document.getElementById('qr-modal').style.display = 'grid';
+        }
+
+        function closeQR() {
+            document.getElementById('qr-modal').style.display = 'none';
+        }
+
+        function copy(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById('toast');
+                toast.style.opacity = '1';
+                setTimeout(() => toast.style.opacity = '0', 2000);
+            });
+        }
+
+        // --- Giữ nguyên logic Canvas và 3D Card ---
         const canvas = document.getElementById('p'), ctx = canvas.getContext('2d'), card = document.getElementById('c');
         let dots = [];
         const init = () => {
@@ -161,31 +204,16 @@
                 d.x += d.vx; d.y += d.vy;
                 if(d.x < 0 || d.x > canvas.width) d.vx *= -1;
                 if(d.y < 0 || d.y > canvas.height) d.vy *= -1;
-                ctx.moveTo(d.x, d.y);
-                ctx.arc(d.x, d.y, 1.2, 0, 7);
+                ctx.moveTo(d.x, d.y); ctx.arc(d.x, d.y, 1.2, 0, 7);
             });
             ctx.fill();
             requestAnimationFrame(anim);
         }
-
-        function copy(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                const toast = document.getElementById('toast');
-                toast.style.opacity = '1';
-                toast.style.transform = 'translateX(-50%) translateY(10px)';
-                setTimeout(() => {
-                    toast.style.opacity = '0';
-                    toast.style.transform = 'translateX(-50%) translateY(0)';
-                }, 2000);
-            });
-        }
-
         window.onmousemove = e => {
             let x = (window.innerWidth/2 - e.pageX)/30, y = (window.innerHeight/2 - e.pageY)/30;
             card.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
         }
         window.onmouseleave = () => card.style.transform = `rotateY(0deg) rotateX(0deg)`;
-
         window.onresize = init;
         init(); anim();
     </script>
