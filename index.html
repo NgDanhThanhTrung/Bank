@@ -56,7 +56,6 @@
             display: flex; align-items: center; padding: 12px 16px;
             background: rgba(255,255,255,0.03); border: 1px solid var(--border);
             border-radius: 20px; cursor: pointer; transition: 0.3s;
-            position: relative;
         }
 
         .bank-item:hover {
@@ -65,7 +64,6 @@
             transform: scale(1.02) translateX(5px);
         }
 
-        /* Style cho logo dạng chữ */
         .bank-logo-text {
             width: 48px; height: 48px; border-radius: 12px;
             margin-right: 15px; flex-shrink: 0;
@@ -74,23 +72,39 @@
             background: #fff;
         }
 
-        .bank-logo-img {
-            width: 48px; height: 48px; border-radius: 12px;
-            margin-right: 15px; flex-shrink: 0;
-            object-fit: contain; background: #fff; padding: 5px;
-        }
-
         .bank-info { text-align: left; flex: 1; }
         .bank-name { font-size: 0.7rem; font-weight: 700; opacity: 0.5; text-transform: uppercase; }
         .account-number { font-size: 1.05rem; font-weight: 600; color: var(--white); margin-top: 2px; }
 
-        .copy-icon { font-size: 0.8rem; opacity: 0.2; }
+        /* Modal QR Styles */
+        .modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            display: none; place-items: center; z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+        .modal-content {
+            background: #fff; padding: 25px; border-radius: 30px;
+            max-width: 340px; width: 90%; text-align: center;
+            position: relative; animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes zoomIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .qr-img { width: 100%; border-radius: 15px; margin-bottom: 15px; cursor: pointer; transition: 0.3s; }
+        .qr-img:active { transform: scale(0.95); }
+        
+        .close-btn { 
+            margin-top: 10px; padding: 12px 20px; background: #f1f5f9; 
+            color: #0f172a; border: none; border-radius: 15px; cursor: pointer; 
+            width: 100%; font-weight: 700; transition: 0.3s;
+        }
+        .close-btn:hover { background: #e2e8f0; }
 
         #toast {
             position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
             background: var(--cyan); color: #010409; padding: 12px 25px;
             border-radius: 50px; font-weight: 700; font-size: 0.85rem;
-            opacity: 0; transition: 0.4s; z-index: 1000;
+            opacity: 0; transition: 0.4s; z-index: 3000;
+            box-shadow: 0 10px 20px rgba(0, 242, 254, 0.3);
         }
 
         @keyframes shine { to { background-position: 200% center; } }
@@ -99,63 +113,94 @@
 <body>
 
     <canvas id="p"></canvas>
-    <div id="toast">Đã sao chép vào bộ nhớ tạm!</div>
+    <div id="toast">Đã sao chép số tài khoản!</div>
+
+    <div class="modal" id="qrModal" onclick="closeQR()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3 id="modalBankName" style="color: #0f172a; margin-bottom: 15px; font-size: 1rem;">Quét để thanh toán</h3>
+            <img id="qrImage" src="" alt="QR Code" class="qr-img" title="Nhấn để mở ứng dụng ngân hàng">
+            <p style="color: #64748b; font-size: 0.75rem; line-height: 1.4;">Chạm vào mã QR để mở trực tiếp ứng dụng ngân hàng trên điện thoại</p>
+            <button class="close-btn" onclick="closeQR()">ĐÓNG</button>
+        </div>
+    </div>
 
     <div class="card" id="c">
         <div class="header">
-            <i class="fa-solid fa-wallet"></i>
-            <h1>PAYMENT INFO</h1>
+            <i class="fa-solid fa-shield-check"></i>
+            <h1>NGUYỄN DANH THÀNH TRUNG</h1>
         </div>
         
         <div class="bank-list">
-            <div class="bank-item" onclick="copy('538888888888')">
-                <div class="bank-logo-text" style="color: #0052cc; background: linear-gradient(135deg, #fff, #e6f0ff);">MBV</div>
+            <div class="bank-item" onclick="openQR('Oceanbank', '538888888888', 'MBV BANK')">
+                <div class="bank-logo-text" style="color: #0082c8; background: linear-gradient(135deg, #fff, #e0f2ff);">MBV</div>
                 <div class="bank-info">
-                    <div class="bank-name">MBV BANK</div>
+                    <div class="bank-name">OCEANBANK (MBV)</div>
                     <div class="account-number">5388 8888 8888</div>
                 </div>
-                <i class="fa-regular fa-copy copy-icon"></i>
+                <i class="fa-solid fa-qrcode" style="color: var(--cyan)"></i>
             </div>
 
-            <div class="bank-item" onclick="copy('56002005032008')">
+            <div class="bank-item" onclick="openQR('MBBank', '56002005032008', 'MB BANK')">
                 <div class="bank-logo-text" style="color: #1e40af;">MB</div>
                 <div class="bank-info">
                     <div class="bank-name">MB BANK</div>
                     <div class="account-number">56002005032008</div>
                 </div>
-                <i class="fa-regular fa-copy copy-icon"></i>
+                <i class="fa-solid fa-qrcode" style="color: var(--cyan)"></i>
             </div>
 
-            <div class="bank-item" onclick="copy('0981506719')">
+            <div class="bank-item" onclick="copyOnly('0981506719')">
                 <div class="bank-logo-text" style="background: #a50064; color: #fff;">MoMo</div>
                 <div class="bank-info">
                     <div class="bank-name">VÍ MOMO</div>
                     <div class="account-number">0981506719</div>
                 </div>
-                <i class="fa-regular fa-copy copy-icon"></i>
-            </div>
-
-            <div class="bank-item" onclick="copy('0981506719')">
-                <img src="https://cdn.haitrieu.com/wp-content/uploads/2022/10/Logo-ShopeePay-V.png" alt="ShopeePay" class="bank-logo-img">
-                <div class="bank-info">
-                    <div class="bank-name">SHOPEEPAY</div>
-                    <div class="account-number">0981506719</div>
-                </div>
-                <i class="fa-regular fa-copy copy-icon"></i>
+                <i class="fa-regular fa-copy" style="opacity:0.3"></i>
             </div>
         </div>
     </div>
 
     <script>
-        function copy(text) {
+        function openQR(bankId, accountNo, displayName) {
+            // 1. Sao chép STK
+            navigator.clipboard.writeText(accountNo).then(() => {
+                showToast("Đã copy STK: " + accountNo);
+            });
+
+            // 2. Cấu hình link ảnh QR (SePay)
+            const qrUrl = `https://qr.sepay.vn/img?bank=${bankId}&acc=${accountNo}&template=compact&amount=&des=Chuyen%20khoan%20Thanh%20Trung`;
+            
+            // 3. Cấu hình Deep Link để mở App (Sử dụng cổng chuyển tiếp SePay)
+            const deepLink = `https://qr.sepay.vn/transfer/messenger/?bank=${bankId}&acc=${accountNo}`;
+
+            document.getElementById('modalBankName').innerText = displayName;
+            document.getElementById('qrImage').src = qrUrl;
+            document.getElementById('qrModal').style.display = 'grid';
+            
+            // Nhấn vào ảnh QR sẽ mở App
+            document.getElementById('qrImage').onclick = () => {
+                window.location.href = deepLink;
+            };
+        }
+
+        function closeQR() {
+            document.getElementById('qrModal').style.display = 'none';
+        }
+
+        function copyOnly(text) {
             navigator.clipboard.writeText(text).then(() => {
-                const toast = document.getElementById('toast');
-                toast.style.opacity = '1';
-                setTimeout(() => toast.style.opacity = '0', 2000);
+                showToast("Đã sao chép vào bộ nhớ tạm!");
             });
         }
 
-        // Logic Background & 3D Card
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.style.opacity = '1';
+            setTimeout(() => toast.style.opacity = '0', 2500);
+        }
+
+        // --- Hiệu ứng 3D & Hạt Background ---
         const canvas = document.getElementById('p'), ctx = canvas.getContext('2d'), card = document.getElementById('c');
         let dots = [];
         const init = () => {
@@ -178,11 +223,10 @@
             ctx.fill();
             requestAnimationFrame(anim);
         }
-        window.onmousemove = e => {
+        window.addEventListener('mousemove', e => {
             let x = (window.innerWidth/2 - e.pageX)/30, y = (window.innerHeight/2 - e.pageY)/30;
             card.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
-        }
-        window.onmouseleave = () => card.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        });
         window.onresize = init;
         init(); anim();
     </script>
