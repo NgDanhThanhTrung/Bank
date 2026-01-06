@@ -175,17 +175,17 @@
         }
 
         .bank-tag {
-            font-size: 0.6rem;
+            font-size: 0.7rem;
             font-weight: 700;
             color: var(--primary);
             text-transform: uppercase;
             margin-bottom: 2px;
         }
 
-        .acc-number {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #fff;
+        .acc-status {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-dim);
         }
 
         .copy-icon {
@@ -309,11 +309,11 @@
                         <div class="logo-wrapper" style="color: #0082c8;">MBV</div>
                         <div class="bank-info">
                             <div class="bank-tag">Oceanbank (MBV)</div>
-                            <div class="acc-number">5388 8888 8888</div>
+                            <div class="acc-status">Nhấn để sao chép STK</div>
                         </div>
                         <i class="fa-regular fa-copy copy-icon"></i>
                     </div>
-                    <div class="qr-side-btn" onclick="openQR('MBV', '538888888888', 'OCEANBANK (MBV)')" title="Hiện mã QR">
+                    <div class="qr-side-btn" onclick="openQR('MBV', '538888888888', 'OCEANBANK (MBV)')">
                         <i class="fa-solid fa-qrcode"></i>
                     </div>
                 </div>
@@ -324,11 +324,11 @@
                         <div class="logo-wrapper" style="color: #1e40af;">MB</div>
                         <div class="bank-info">
                             <div class="bank-tag">MB Bank</div>
-                            <div class="acc-number">5600 2005 0320 08</div>
+                            <div class="acc-status">Nhấn để sao chép STK</div>
                         </div>
                         <i class="fa-regular fa-copy copy-icon"></i>
                     </div>
-                    <div class="qr-side-btn" onclick="openQR('MB', '56002005032008', 'MB BANK')" title="Hiện mã QR">
+                    <div class="qr-side-btn" onclick="openQR('MB', '56002005032008', 'MB BANK')">
                         <i class="fa-solid fa-qrcode"></i>
                     </div>
                 </div>
@@ -339,11 +339,11 @@
                         <div class="logo-wrapper" style="background: #ee4d2d; color: #fff;">SPP</div>
                         <div class="bank-info">
                             <div class="bank-tag">ShopeePay</div>
-                            <div class="acc-number">0981 506 719</div>
+                            <div class="acc-status">Nhấn để sao chép SĐT</div>
                         </div>
                         <i class="fa-regular fa-copy copy-icon"></i>
                     </div>
-                    <div class="qr-side-btn" onclick="openQR('SPP', '0981506719', 'SHOPEE PAY')" title="Hiện mã QR">
+                    <div class="qr-side-btn" onclick="openQR('SPP', '0981506719', 'SHOPEE PAY')">
                         <i class="fa-solid fa-qrcode"></i>
                     </div>
                 </div>
@@ -354,11 +354,11 @@
                         <div class="logo-wrapper" style="background: #a50064; color: #fff;">MoMo</div>
                         <div class="bank-info">
                             <div class="bank-tag">Ví MoMo</div>
-                            <div class="acc-number">0981 506 719</div>
+                            <div class="acc-status">Nhấn để sao chép SĐT</div>
                         </div>
                         <i class="fa-regular fa-copy copy-icon"></i>
                     </div>
-                    <div class="qr-side-btn" onclick="openQR('MOMO', '0981506719', 'VÍ MOMO')" title="Hiện mã QR">
+                    <div class="qr-side-btn" onclick="openQR('MOMO', '0981506719', 'VÍ MOMO')">
                         <i class="fa-solid fa-qrcode"></i>
                     </div>
                 </div>
@@ -412,7 +412,7 @@
             qrModal.style.display = 'none';
         }
 
-        // Particle background
+        // Particle background logic
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
