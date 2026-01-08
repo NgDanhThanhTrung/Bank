@@ -145,7 +145,6 @@
             box-shadow: -5px 0 15px rgba(0, 242, 254, 0.15);
         }
 
-        /* Hiệu ứng quét sáng khi hover */
         .bank-item-main::after {
             content: '';
             position: absolute;
@@ -237,7 +236,6 @@
             color: var(--primary);
         }
 
-        /* Modal */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -366,7 +364,6 @@
             </div>
 
             <div class="bank-list">
-                <!-- OceanBank Group -->
                 <div class="bank-group">
                     <div class="bank-item-main" onclick="copyOnly('538888888888', 'STK Oceanbank')">
                         <div class="logo-wrapper" style="color: #0082c8;">MBV</div>
@@ -381,7 +378,6 @@
                     </div>
                 </div>
 
-                <!-- MB Bank Group -->
                 <div class="bank-group">
                     <div class="bank-item-main" onclick="copyOnly('56002005032008', 'STK MB Bank')">
                         <div class="logo-wrapper" style="color: #1e40af;">MB</div>
@@ -396,7 +392,6 @@
                     </div>
                 </div>
 
-                <!-- ShopeePay Group -->
                 <div class="bank-group">
                     <div class="bank-item-main" onclick="copyOnly('0981506719', 'SĐT ShopeePay')">
                         <div class="logo-wrapper" style="background: #ee4d2d; color: #fff;">SPP</div>
@@ -411,7 +406,6 @@
                     </div>
                 </div>
 
-                <!-- MoMo Group -->
                 <div class="bank-group">
                     <div class="bank-item-main" onclick="copyOnly('0981506719', 'SĐT Ví MoMo')">
                         <div class="logo-wrapper" style="background: #a50064; color: #fff;">MoMo</div>
@@ -479,7 +473,6 @@
             }, 300);
         }
 
-        // Particle background logic with Mouse Interaction
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -490,7 +483,6 @@
             mouse.y = e.clientY;
         });
 
-        // Xử lý di chuyển hạt khi chạm trên điện thoại
         window.addEventListener('touchmove', (e) => {
             if (e.touches.length > 0) {
                 mouse.x = e.touches[0].clientX;
@@ -516,17 +508,13 @@
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
             particles.forEach(p => {
                 p.x += p.vx;
                 p.y += p.vy;
-
-                // Tương tác chuột - hạt né tránh
                 if (mouse.x !== null) {
                     let dx = mouse.x - p.x;
                     let dy = mouse.y - p.y;
                     let distance = Math.sqrt(dx * dx + dy * dy);
-
                     if (distance < mouse.radius) {
                         const force = (mouse.radius - distance) / mouse.radius;
                         const moveX = (dx / distance) * force * 4;
@@ -535,13 +523,10 @@
                         p.y -= moveY;
                     }
                 }
-
-                // Giữ hạt trong màn hình
                 if(p.x < 0) p.x = canvas.width;
                 if(p.x > canvas.width) p.x = 0;
                 if(p.y < 0) p.y = canvas.height;
                 if(p.y > canvas.height) p.y = 0;
-
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(0, 242, 254, ${0.1 + (Math.random() * 0.1)})`;
