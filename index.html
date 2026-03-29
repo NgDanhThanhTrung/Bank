@@ -205,6 +205,7 @@
             font-size: 0.85rem;
             font-weight: 500;
             color: var(--text-dim);
+            letter-spacing: 1px;
         }
 
         .copy-icon {
@@ -340,7 +341,7 @@
             <div class="qr-container">
                 <img id="qrImg" src="" alt="Mã QR thanh toán" class="qr-image">
             </div>
-            <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 22px;">Kiểm tra kỹ thông tin người thụ hưởng trước khi xác nhận chuyển tiền.</p>
+            <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 22px;">Quét mã để thanh toán an toàn. Số tài khoản thực tế đã được ẩn trên danh sách để bảo vệ quyền riêng tư.</p>
             
             <div class="modal-actions">
                 <button class="btn-download" id="downloadBtn">
@@ -370,7 +371,7 @@
                         </div>
                         <div class="bank-info">
                             <div class="bank-tag">Oceanbank (MBV)</div>
-                            <div class="acc-status">538888888888</div>
+                            <div class="acc-status">•••• •••• 8888</div>
                         </div>
                         <i class="fa-regular fa-copy copy-icon"></i>
                     </div>
@@ -387,7 +388,7 @@
                         </div>
                         <div class="bank-info">
                             <div class="bank-tag">MB Bank</div>
-                            <div class="acc-status">56002005032008</div>
+                            <div class="acc-status">•••• •••• •••• 2008</div>
                         </div>
                         <i class="fa-regular fa-copy copy-icon"></i>
                     </div>
@@ -404,7 +405,7 @@
                         </div>
                         <div class="bank-info">
                             <div class="bank-tag">ZaloPay</div>
-                            <div class="acc-status">0981506719</div>
+                            <div class="acc-status">•••• ••• 6719</div>
                         </div>
                         <i class="fa-regular fa-copy copy-icon"></i>
                     </div>
@@ -421,7 +422,7 @@
                         </div>
                         <div class="bank-info">
                             <div class="bank-tag">ShopeePay</div>
-                            <div class="acc-status">0981506719</div>
+                            <div class="acc-status">•••• ••• 6719</div>
                         </div>
                         <i class="fa-regular fa-copy copy-icon"></i>
                     </div>
@@ -438,7 +439,7 @@
                         </div>
                         <div class="bank-info">
                             <div class="bank-tag">Ví MoMo</div>
-                            <div class="acc-status">0981506719</div>
+                            <div class="acc-status">•••• ••• 6719</div>
                         </div>
                         <i class="fa-regular fa-copy copy-icon"></i>
                     </div>
@@ -492,15 +493,32 @@
                 modalBank.innerText = name;
                 qrModal.style.display = 'grid';
                 
-                // Logic tải ảnh
-                downloadBtn.onclick = () => {
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `QR_ThanhToan_${key}.jpg`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    showToast("Đang tải mã QR...");
+                // Logic tải ảnh trực tiếp
+                downloadBtn.onclick = async () => {
+                    try {
+                        showToast("Đang xử lý tải xuống...");
+                        const response = await fetch(url);
+                        const blob = await response.blob();
+                        const blobUrl = window.URL.createObjectURL(blob);
+                        
+                        const a = document.createElement('a');
+                        a.href = blobUrl;
+                        a.download = `QR_ThanhToan_${key}.jpg`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(blobUrl);
+                        
+                        showToast("Đã tải mã QR về máy!");
+                    } catch (error) {
+                        // Fallback nếu fetch bị lỗi CORS
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.target = '_blank';
+                        a.download = `QR_ThanhToan_${key}.jpg`;
+                        a.click();
+                        showToast("Đã mở ảnh để tải xuống.");
+                    }
                 };
 
                 setTimeout(() => qrModal.classList.add('active'), 10);
@@ -514,7 +532,7 @@
             }, 300);
         }
 
-        // Particle Background
+        // Particle Background logic
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -570,7 +588,8 @@
         }
 
         window.addEventListener('resize', init);
-        init(); draw();
+        init(); 
+        draw();
     </script>
 </body>
 </html>
