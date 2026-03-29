@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Thanh Toán - Nguyễn Danh Thành Trung</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -34,6 +34,7 @@
             align-items: center;
             overflow-x: hidden;
             position: relative;
+            padding: 20px 0;
         }
 
         canvas {
@@ -69,7 +70,6 @@
             margin-bottom: 32px;
         }
 
-        /* Avatar Styling */
         .avatar-box {
             width: 90px;
             height: 90px;
@@ -180,13 +180,12 @@
             justify-content: center;
             flex-shrink: 0;
             overflow: hidden;
-            transition: transform 0.3s ease;
         }
 
         .logo-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
         }
 
         .bank-info {
@@ -212,19 +211,14 @@
             color: var(--text-dim);
             font-size: 0.9rem;
             opacity: 0.5;
-            transition: all 0.3s ease;
         }
 
-        .bank-item-main:hover .copy-icon {
-            opacity: 1;
-            color: var(--primary);
-        }
-
+        /* Modal Styles */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.92);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(12px);
             display: none;
             place-items: center;
             z-index: 1000;
@@ -232,21 +226,18 @@
             animation: fadeIn 0.3s ease;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
         .modal-card {
             background: #fff;
             color: #020617;
             width: 100%;
             max-width: 360px;
-            border-radius: 24px;
-            padding: 28px;
+            border-radius: 28px;
+            padding: 30px 25px;
             text-align: center;
             transform: scale(0.9);
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .modal-overlay.active .modal-card {
@@ -254,35 +245,62 @@
         }
 
         .qr-container {
-            background: #f1f5f9;
+            background: #f8fafc;
             padding: 12px;
-            border-radius: 16px;
+            border-radius: 20px;
             margin: 20px 0;
-            min-height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
         }
 
         .qr-image {
             width: 100%;
-            border-radius: 8px;
+            max-width: 240px;
+            height: auto;
+            border-radius: 12px;
             display: block;
+            margin: 0 auto;
         }
 
-        .btn-primary {
+        .modal-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-download {
             width: 100%;
-            padding: 14px;
+            padding: 15px;
             border: none;
-            border-radius: 14px;
-            background: #020617;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
             color: #fff;
             font-weight: 700;
             font-size: 0.9rem;
             cursor: pointer;
-            transition: background 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+            transition: transform 0.2s ease;
         }
+
+        .btn-download:active { transform: scale(0.97); }
+
+        .btn-close {
+            width: 100%;
+            padding: 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 16px;
+            background: transparent;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-close:hover { background: #f8fafc; }
 
         .toast {
             position: fixed;
@@ -306,9 +324,8 @@
             transform: translate(-50%, 0);
         }
 
-        @keyframes shine {
-            to { background-position: 200% center; }
-        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes shine { to { background-position: 200% center; } }
     </style>
 </head>
 <body>
@@ -316,26 +333,32 @@
     <canvas id="bgCanvas"></canvas>
     <div id="toast" class="toast">Đã sao chép</div>
 
+    <!-- Modal QR -->
     <div class="modal-overlay" id="qrModal" onclick="closeModal()">
         <div class="modal-card" onclick="event.stopPropagation()">
-            <div id="modalBank" style="font-weight: 800; font-size: 1rem; text-transform: uppercase; color: #020617;">NGÂN HÀNG</div>
+            <div id="modalBank" style="font-weight: 800; font-size: 1rem; text-transform: uppercase; color: #020617; letter-spacing: 0.5px;">TÊN NGÂN HÀNG</div>
             <div class="qr-container">
                 <img id="qrImg" src="" alt="Mã QR thanh toán" class="qr-image">
             </div>
-            <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 20px;">Vui lòng kiểm tra kỹ thông tin trước khi chuyển.</p>
-            <button class="btn-primary" onclick="closeModal()">ĐÓNG</button>
+            <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 22px;">Kiểm tra kỹ thông tin người thụ hưởng trước khi xác nhận chuyển tiền.</p>
+            
+            <div class="modal-actions">
+                <button class="btn-download" id="downloadBtn">
+                    <i class="fa-solid fa-download"></i> TẢI MÃ QR VỀ MÁY
+                </button>
+                <button class="btn-close" onclick="closeModal()">ĐÓNG</button>
+            </div>
         </div>
     </div>
 
     <div class="container">
         <div class="main-card">
             <div class="profile-section">
-                <!-- Cập nhật AVT tại đây -->
                 <div class="avatar-box">
                     <img src="https://raw.githubusercontent.com/NgDanhThanhTrung/Bank/main/AVT.jpg" alt="Nguyễn Danh Thành Trung">
                 </div>
                 <h1>Nguyễn Danh Thành Trung</h1>
-                <p class="description">Hỗ trợ để duy trì và phát triển dự án</p>
+                <p class="description">Cảm ơn bạn đã ủng hộ để duy trì và phát triển dự án</p>
             </div>
 
             <div class="bank-list">
@@ -347,11 +370,11 @@
                         </div>
                         <div class="bank-info">
                             <div class="bank-tag">Oceanbank (MBV)</div>
-                            <div class="acc-status">Nhấn để sao chép STK</div>
+                            <div class="acc-status">538888888888</div>
                         </div>
                         <i class="fa-regular fa-copy copy-icon"></i>
                     </div>
-                    <div class="qr-side-btn" onclick="openQR('MBV', '538888888888', 'OCEANBANK (MBV)')">
+                    <div class="qr-side-btn" onclick="openQR('MBV', 'OCEANBANK (MBV)')">
                         <i class="fa-solid fa-qrcode"></i>
                     </div>
                 </div>
@@ -364,11 +387,11 @@
                         </div>
                         <div class="bank-info">
                             <div class="bank-tag">MB Bank</div>
-                            <div class="acc-status">Nhấn để sao chép STK</div>
+                            <div class="acc-status">56002005032008</div>
                         </div>
                         <i class="fa-regular fa-copy copy-icon"></i>
                     </div>
-                    <div class="qr-side-btn" onclick="openQR('MB', '56002005032008', 'MB BANK')">
+                    <div class="qr-side-btn" onclick="openQR('MB', 'MB BANK')">
                         <i class="fa-solid fa-qrcode"></i>
                     </div>
                 </div>
@@ -381,11 +404,11 @@
                         </div>
                         <div class="bank-info">
                             <div class="bank-tag">ZaloPay</div>
-                            <div class="acc-status">Nhấn để sao chép SĐT</div>
+                            <div class="acc-status">0981506719</div>
                         </div>
                         <i class="fa-regular fa-copy copy-icon"></i>
                     </div>
-                    <div class="qr-side-btn" onclick="openQR('ZLP', '0981506719', 'ZALOPAY')">
+                    <div class="qr-side-btn" onclick="openQR('ZLP', 'ZALOPAY')">
                         <i class="fa-solid fa-qrcode"></i>
                     </div>
                 </div>
@@ -398,11 +421,11 @@
                         </div>
                         <div class="bank-info">
                             <div class="bank-tag">ShopeePay</div>
-                            <div class="acc-status">Nhấn để sao chép SĐT</div>
+                            <div class="acc-status">0981506719</div>
                         </div>
                         <i class="fa-regular fa-copy copy-icon"></i>
                     </div>
-                    <div class="qr-side-btn" onclick="openQR('SPP', '0981506719', 'SHOPEE PAY')">
+                    <div class="qr-side-btn" onclick="openQR('SPP', 'SHOPEE PAY')">
                         <i class="fa-solid fa-qrcode"></i>
                     </div>
                 </div>
@@ -415,11 +438,11 @@
                         </div>
                         <div class="bank-info">
                             <div class="bank-tag">Ví MoMo</div>
-                            <div class="acc-status">Nhấn để sao chép SĐT</div>
+                            <div class="acc-status">0981506719</div>
                         </div>
                         <i class="fa-regular fa-copy copy-icon"></i>
                     </div>
-                    <div class="qr-side-btn" onclick="openQR('MOMO', '0981506719', 'VÍ MOMO')">
+                    <div class="qr-side-btn" onclick="openQR('MOMO', 'VÍ MOMO')">
                         <i class="fa-solid fa-qrcode"></i>
                     </div>
                 </div>
@@ -432,6 +455,7 @@
         const qrModal = document.getElementById('qrModal');
         const qrImg = document.getElementById('qrImg');
         const modalBank = document.getElementById('modalBank');
+        const downloadBtn = document.getElementById('downloadBtn');
 
         const qrLinks = {
             'MBV': 'https://raw.githubusercontent.com/NgDanhThanhTrung/Bank/main/QR_MBV.jpg',
@@ -461,12 +485,24 @@
             showToast("Đã sao chép " + label);
         }
 
-        function openQR(key, acc, name) {
+        function openQR(key, name) {
             const url = qrLinks[key];
             if (url) {
                 qrImg.src = url;
                 modalBank.innerText = name;
                 qrModal.style.display = 'grid';
+                
+                // Logic tải ảnh
+                downloadBtn.onclick = () => {
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `QR_ThanhToan_${key}.jpg`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    showToast("Đang tải mã QR...");
+                };
+
                 setTimeout(() => qrModal.classList.add('active'), 10);
             }
         }
@@ -493,7 +529,8 @@
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             particles = [];
-            let numberOfParticles = (canvas.width * canvas.height) / 14000;
+            let density = canvas.width < 500 ? 25000 : 15000;
+            let numberOfParticles = (canvas.width * canvas.height) / density;
             for (let i = 0; i < numberOfParticles; i++) {
                 particles.push({
                     x: Math.random() * canvas.width,
@@ -516,10 +553,8 @@
                     let distance = Math.sqrt(dx * dx + dy * dy);
                     if (distance < mouse.radius) {
                         const force = (mouse.radius - distance) / mouse.radius;
-                        const moveX = (dx / distance) * force * 4;
-                        const moveY = (dy / distance) * force * 4;
-                        p.x -= moveX;
-                        p.y -= moveY;
+                        p.x -= (dx / distance) * force * 4;
+                        p.y -= (dy / distance) * force * 4;
                     }
                 }
                 if(p.x < 0) p.x = canvas.width;
@@ -528,15 +563,14 @@
                 if(p.y > canvas.height) p.y = 0;
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(0, 242, 254, ${0.1 + (Math.random() * 0.1)})`;
+                ctx.fillStyle = "rgba(0, 242, 254, 0.15)";
                 ctx.fill();
             });
             requestAnimationFrame(draw);
         }
 
         window.addEventListener('resize', init);
-        init(); 
-        draw();
+        init(); draw();
     </script>
 </body>
 </html>
