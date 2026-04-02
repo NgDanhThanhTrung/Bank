@@ -588,8 +588,10 @@
         }
 
         window.addEventListener('resize', init);
-        init(); 
-        draw();
+        window.onload = function() {
+            init(); 
+            draw();
+        }
     </script>
 </body>
 </html>
