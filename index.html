@@ -4,405 +4,536 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Thanh Toán - Nguyễn Danh Thành Trung</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #00f2fe;
             --secondary: #4facfe;
+            --accent: #7000ff;
             --bg-dark: #020617;
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --border-white: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
             --text-main: #ffffff;
             --text-dim: #94a3b8;
         }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             -webkit-tap-highlight-color: transparent;
         }
+
         body {
             background-color: var(--bg-dark);
             color: var(--text-main);
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             overflow-x: hidden;
             position: relative;
-            padding: 20px 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
         }
+
+        /* Nền động dạng Mesh Gradient */
+        .mesh-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: radial-gradient(circle at 10% 10%, rgba(112, 0, 255, 0.15) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 90%, rgba(0, 242, 254, 0.15) 0%, transparent 40%);
+        }
+
         canvas {
             position: fixed;
             inset: 0;
             z-index: 0;
+            pointer-events: none;
         }
+
         .container {
             width: 100%;
-            max-width: 440px;
-            padding: 20px;
+            max-width: 480px;
             z-index: 10;
+            position: relative;
+            padding: 20px 0;
         }
-        .main-card {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--border-white);
-            border-radius: 32px;
-            padding: 40px 20px;
-            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
-            text-align: center;
-            transition: border-color 0.3s ease;
-        }
-        .main-card:hover {
-            border-color: rgba(0, 242, 254, 0.3);
-        }
+
+        /* Profile Section */
         .profile-section {
-            margin-bottom: 32px;
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 20px;
         }
+
         .avatar-box {
-            width: 90px;
-            height: 90px;
-            margin: 0 auto 16px;
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 25px;
             position: relative;
             padding: 4px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary), var(--accent));
             border-radius: 50%;
-            box-shadow: 0 0 25px rgba(0, 242, 254, 0.4);
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 40px rgba(0, 242, 254, 0.25);
         }
-        .avatar-box:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 35px rgba(0, 242, 254, 0.6);
-        }
+
         .avatar-box img {
             width: 100%;
             height: 100%;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid var(--bg-dark);
+            border: 4px solid var(--bg-dark);
         }
+
         h1 {
             font-family: 'Montserrat', sans-serif;
-            font-size: 1.2rem;
-            letter-spacing: 1.2px;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
             text-transform: uppercase;
-            background: linear-gradient(to right, #fff, var(--primary), #fff);
+            font-weight: 800;
+            background: linear-gradient(to right, #ffffff, var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-size: 200% auto;
-            animation: shine 5s linear infinite;
+            margin-bottom: 25px;
         }
-        .description {
+
+        /* Đồng hồ */
+        .clock-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 35px;
+            padding: 25px 15px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .clock-header {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: block;
+            opacity: 0.8;
+        }
+
+        .clock-time-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .clock-time-main {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+
+        .clock-seconds {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--secondary);
+            width: 25px;
+            text-align: left;
+        }
+
+        .clock-date-fancy {
+            font-size: 0.85rem;
             color: var(--text-dim);
-            font-size: 0.8rem;
-            margin-top: 8px;
-            font-weight: 400;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
+
+        .clock-date-fancy::before, .clock-date-fancy::after {
+            content: '';
+            width: 20px;
+            height: 1px;
+            background: var(--glass-border);
+        }
+
+        /* Bank List */
         .bank-list {
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
+
         .bank-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             align-items: stretch;
+            animation: slideUp 0.6s ease backwards;
         }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .bank-item-main {
             flex: 1;
-            background: var(--card-bg);
-            border: 1px solid var(--border-white);
-            border-radius: 20px;
-            padding: 14px 16px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 18px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
+            transition: all 0.3s ease;
         }
+
         .bank-item-main:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.07);
             border-color: var(--primary);
             transform: translateX(5px);
-            box-shadow: -5px 0 15px rgba(0, 242, 254, 0.15);
         }
+
         .qr-side-btn {
-            width: 58px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-white);
-            border-radius: 20px;
+            width: 65px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
             color: var(--primary);
-            font-size: 1.2rem;
+            font-size: 1.4rem;
         }
+
         .qr-side-btn:hover {
             background: var(--primary);
             color: var(--bg-dark);
-            border-color: var(--primary);
-            box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
-            transform: scale(1.05);
+            transform: scale(1.05) rotate(8deg);
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
         }
+
         .logo-wrapper {
-            width: 44px;
-            height: 44px;
+            width: 50px;
+            height: 50px;
             background: #fff;
-            border-radius: 12px;
+            border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            overflow: hidden;
+            padding: 6px;
         }
+
         .logo-wrapper img {
-            width: 90%;
-            height: 90%;
+            width: 100%;
+            height: 100%;
             object-fit: contain;
         }
+
         .bank-info {
             text-align: left;
             flex-grow: 1;
         }
+
         .bank-tag {
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             font-weight: 700;
             color: var(--primary);
-            text-transform: uppercase;
             margin-bottom: 2px;
+            display: block;
         }
+
         .acc-status {
-            font-size: 0.85rem;
-            font-weight: 500;
+            font-size: 0.75rem;
             color: var(--text-dim);
-            letter-spacing: 1px;
+            font-style: italic;
+            opacity: 0.8;
         }
+
         .copy-icon {
             color: var(--text-dim);
-            font-size: 0.9rem;
-            opacity: 0.5;
+            font-size: 1.1rem;
+            opacity: 0.3;
         }
+
+        .bank-item-main:hover .copy-icon {
+            opacity: 1;
+            color: var(--primary);
+        }
+
+        /* Modal UI */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(12px);
+            background: rgba(2, 6, 23, 0.9);
+            backdrop-filter: blur(20px);
             display: none;
             place-items: center;
             z-index: 1000;
             padding: 20px;
-            animation: fadeIn 0.3s ease;
         }
+
         .modal-card {
             background: #fff;
-            color: #020617;
+            color: #0f172a;
             width: 100%;
-            max-width: 360px;
-            border-radius: 28px;
-            padding: 30px 25px;
+            max-width: 400px;
+            border-radius: 40px;
+            padding: 40px 30px;
             text-align: center;
-            transform: scale(0.9);
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            max-height: 90vh;
-            overflow-y: auto;
+            animation: modalIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .modal-overlay.active .modal-card {
-            transform: scale(1);
+
+        @keyframes modalIn {
+            from { transform: scale(0.8) translateY(40px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
         }
+
         .qr-container {
             background: #f8fafc;
-            padding: 12px;
-            border-radius: 20px;
-            margin: 20px 0;
-            border: 1px solid #e2e8f0;
+            padding: 20px;
+            border-radius: 30px;
+            margin: 25px 0;
+            border: 2px dashed #e2e8f0;
         }
+
         .qr-image {
             width: 100%;
-            max-width: 240px;
-            height: auto;
-            border-radius: 12px;
+            border-radius: 15px;
             display: block;
-            margin: 0 auto;
         }
-        .modal-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+
         .btn-download {
             width: 100%;
-            padding: 15px;
+            padding: 20px;
             border: none;
-            border-radius: 16px;
-            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            border-radius: 25px;
+            background: var(--bg-dark);
             color: #fff;
             font-weight: 700;
-            font-size: 0.9rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
-            transition: transform 0.2s ease;
+            gap: 12px;
+            margin-bottom: 15px;
         }
-        .btn-download:active { transform: scale(0.97); }
+
         .btn-close {
-            width: 100%;
-            padding: 14px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 16px;
-            background: transparent;
-            color: #64748b;
+            background: none;
+            border: none;
+            color: #94a3b8;
             font-weight: 600;
-            font-size: 0.85rem;
             cursor: pointer;
-            transition: background 0.2s;
         }
-        .btn-close:hover { background: #f8fafc; }
+
         .toast {
             position: fixed;
             top: 30px;
             left: 50%;
-            transform: translate(-50%, -20px);
+            transform: translate(-50%, -100px);
             background: var(--primary);
-            color: #020617;
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 0.85rem;
+            color: var(--bg-dark);
+            padding: 14px 30px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 0.9rem;
             z-index: 2000;
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            pointer-events: none;
+            box-shadow: 0 10px 30px rgba(0, 242, 254, 0.4);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+
         .toast.show {
-            opacity: 1;
             transform: translate(-50%, 0);
         }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes shine { to { background-position: 200% center; } }
+
+        @media (max-width: 480px) {
+            .clock-time-main { font-size: 2.4rem; }
+            .container { padding: 10px; }
+        }
     </style>
 </head>
 <body>
+    <div class="mesh-bg"></div>
     <canvas id="bgCanvas"></canvas>
-    <div id="toast" class="toast">Đã sao chép</div>
+    
+    <div id="toast" class="toast">Đã sao chép thành công</div>
+
     <div class="modal-overlay" id="qrModal" onclick="closeModal()">
         <div class="modal-card" onclick="event.stopPropagation()">
-            <div id="modalBank" style="font-weight: 800; font-size: 1rem; text-transform: uppercase; color: #020617; letter-spacing: 0.5px;">TÊN NGÂN HÀNG</div>
+            <div id="modalBank" style="font-weight: 900; font-size: 1.2rem; text-transform: uppercase;">NGÂN HÀNG</div>
             <div class="qr-container">
-                <img id="qrImg" src="" alt="Mã QR thanh toán" class="qr-image">
+                <img id="qrImg" src="" alt="Mã QR" class="qr-image">
             </div>
-            <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 22px;">Quét mã để thanh toán an toàn. Số tài khoản thực tế đã được ẩn trên danh sách để bảo vệ quyền riêng tư.</p>  
-            <div class="modal-actions">
-                <button class="btn-download" id="downloadBtn">
-                    <i class="fa-solid fa-download"></i> TẢI MÃ QR VỀ MÁY
-                </button>
-                <button class="btn-close" onclick="closeModal()">ĐÓNG</button>
-            </div>
+            <button class="btn-download" id="downloadBtn">
+                <i class="fa-solid fa-download"></i> TẢI ẢNH QR
+            </button>
+            <button class="btn-close" onclick="closeModal()">Đóng cửa sổ</button>
         </div>
     </div>
+
     <div class="container">
-        <div class="main-card">
-            <div class="profile-section">
-                <div class="avatar-box">
-                    <img src="https://raw.githubusercontent.com/NgDanhThanhTrung/Bank/main/AVT.jpg" alt="Nguyễn Danh Thành Trung">
-                </div>
-                <h1>Nguyễn Danh Thành Trung</h1>
-                <p class="description">Cảm ơn bạn đã ủng hộ để duy trì và phát triển dự án</p>
+        <!-- Thông tin cá nhân -->
+        <div class="profile-section">
+            <div class="avatar-box">
+                <img src="https://raw.githubusercontent.com/NgDanhThanhTrung/Bank/main/AVT.jpg" alt="AVT">
             </div>
-            <div class="bank-list">
-                <div class="bank-group">
-                    <div class="bank-item-main" onclick="copyOnly('538888888888', 'STK Oceanbank')">
-                        <div class="logo-wrapper">
-                            <img src="https://raw.githubusercontent.com/NgDanhThanhTrung/Bank/main/LOGO_MBV.jpg" alt="Oceanbank">
-                        </div>
-                        <div class="bank-info">
-                            <div class="bank-tag">Oceanbank (MBV)</div>
-                            <div class="acc-status">•••• •••• 8888</div>
-                        </div>
-                        <i class="fa-regular fa-copy copy-icon"></i>
-                    </div>
-                    <div class="qr-side-btn" onclick="openQR('MBV', 'OCEANBANK (MBV)')">
-                        <i class="fa-solid fa-qrcode"></i>
-                    </div>
+            <h1>Nguyễn Danh Thành Trung</h1>
+            
+            <!-- Đồng hồ -->
+            <div class="clock-container">
+                <span class="clock-header">Hệ thống thời gian Việt Nam</span>
+                <div class="clock-time-wrapper">
+                    <div class="clock-time-main" id="vTimeMain">00:00</div>
+                    <div class="clock-seconds" id="vSeconds">00</div>
                 </div>
-                <div class="bank-group">
-                    <div class="bank-item-main" onclick="copyOnly('56002005032008', 'STK MB Bank')">
-                        <div class="logo-wrapper">
-                            <img src="https://raw.githubusercontent.com/NgDanhThanhTrung/Bank/main/LOGO_MB.jpg" alt="MB Bank">
-                        </div>
-                        <div class="bank-info">
-                            <div class="bank-tag">MB Bank</div>
-                            <div class="acc-status">•••• •••• •••• 2008</div>
-                        </div>
-                        <i class="fa-regular fa-copy copy-icon"></i>
+                <div class="clock-date-fancy" id="vDateFancy">Đang tải ngày tháng...</div>
+            </div>
+        </div>
+
+        <div class="bank-list">
+            <!-- Oceanbank -->
+            <div class="bank-group">
+                <div class="bank-item-main" onclick="copyOnly('538888888888', 'Oceanbank')">
+                    <div class="logo-wrapper">
+                        <img src="https://raw.githubusercontent.com/NgDanhThanhTrung/Bank/main/LOGO_MBV.jpg" alt="Oceanbank">
                     </div>
-                    <div class="qr-side-btn" onclick="openQR('MB', 'MB BANK')">
-                        <i class="fa-solid fa-qrcode"></i>
+                    <div class="bank-info">
+                        <span class="bank-tag">Oceanbank (MBV)</span>
+                        <div class="acc-status">Chạm để copy số tài khoản</div>
                     </div>
+                    <i class="fa-regular fa-clone copy-icon"></i>
                 </div>
-                <div class="bank-group">
-                    <div class="bank-item-main" onclick="copyOnly('0981506719', 'SĐT ZaloPay')">
-                        <div class="logo-wrapper">
-                            <img src="https://raw.githubusercontent.com/NgDanhThanhTrung/Bank/main/LOGO_ZLP.jpg" alt="ZaloPay">
-                        </div>
-                        <div class="bank-info">
-                            <div class="bank-tag">ZaloPay</div>
-                            <div class="acc-status">•••• ••• 6719</div>
-                        </div>
-                        <i class="fa-regular fa-copy copy-icon"></i>
-                    </div>
-                    <div class="qr-side-btn" onclick="openQR('ZLP', 'ZALOPAY')">
-                        <i class="fa-solid fa-qrcode"></i>
-                    </div>
+                <div class="qr-side-btn" onclick="openQR('MBV', 'OCEANBANK (MBV)')">
+                    <i class="fa-solid fa-qrcode"></i>
                 </div>
-                <div class="bank-group">
-                    <div class="bank-item-main" onclick="copyOnly('0981506719', 'SĐT ShopeePay')">
-                        <div class="logo-wrapper">
-                            <img src="https://raw.githubusercontent.com/NgDanhThanhTrung/Bank/main/LOGO_SPP.jpg" alt="ShopeePay">
-                        </div>
-                        <div class="bank-info">
-                            <div class="bank-tag">ShopeePay</div>
-                            <div class="acc-status">•••• ••• 6719</div>
-                        </div>
-                        <i class="fa-regular fa-copy copy-icon"></i>
+            </div>
+
+            <!-- MB Bank -->
+            <div class="bank-group">
+                <div class="bank-item-main" onclick="copyOnly('56002005032008', 'MB Bank')">
+                    <div class="logo-wrapper">
+                        <img src="https://raw.githubusercontent.com/NgDanhThanhTrung/Bank/main/LOGO_MB.jpg" alt="MB Bank">
                     </div>
-                    <div class="qr-side-btn" onclick="openQR('SPP', 'SHOPEE PAY')">
-                        <i class="fa-solid fa-qrcode"></i>
+                    <div class="bank-info">
+                        <span class="bank-tag">MB Bank</span>
+                        <div class="acc-status">Chạm để copy số tài khoản</div>
                     </div>
+                    <i class="fa-regular fa-clone copy-icon"></i>
                 </div>
-                <div class="bank-group">
-                    <div class="bank-item-main" onclick="copyOnly('0981506719', 'SĐT Ví MoMo')">
-                        <div class="logo-wrapper">
-                            <img src="https://raw.githubusercontent.com/NgDanhThanhTrung/Bank/main/LOGO_MOMO.jpg" alt="MoMo">
-                        </div>
-                        <div class="bank-info">
-                            <div class="bank-tag">Ví MoMo</div>
-                            <div class="acc-status">•••• ••• 6719</div>
-                        </div>
-                        <i class="fa-regular fa-copy copy-icon"></i>
+                <div class="qr-side-btn" onclick="openQR('MB', 'MB BANK')">
+                    <i class="fa-solid fa-qrcode"></i>
+                </div>
+            </div>
+
+            <!-- ZaloPay -->
+            <div class="bank-group">
+                <div class="bank-item-main" onclick="copyOnly('0981506719', 'ZaloPay')">
+                    <div class="logo-wrapper">
+                        <img src="https://raw.githubusercontent.com/NgDanhThanhTrung/Bank/main/LOGO_ZLP.jpg" alt="ZaloPay">
                     </div>
-                    <div class="qr-side-btn" onclick="openQR('MOMO', 'VÍ MOMO')">
-                        <i class="fa-solid fa-qrcode"></i>
+                    <div class="bank-info">
+                        <span class="bank-tag">ZaloPay</span>
+                        <div class="acc-status">Chạm để copy số tài khoản</div>
                     </div>
+                    <i class="fa-regular fa-clone copy-icon"></i>
+                </div>
+                <div class="qr-side-btn" onclick="openQR('ZLP', 'ZALOPAY')">
+                    <i class="fa-solid fa-qrcode"></i>
+                </div>
+            </div>
+
+            <!-- ShopeePay -->
+            <div class="bank-group">
+                <div class="bank-item-main" onclick="copyOnly('0981506719', 'ShopeePay')">
+                    <div class="logo-wrapper">
+                        <img src="https://raw.githubusercontent.com/NgDanhThanhTrung/Bank/main/LOGO_SPP.jpg" alt="ShopeePay">
+                    </div>
+                    <div class="bank-info">
+                        <span class="bank-tag">ShopeePay</span>
+                        <div class="acc-status">Chạm để copy số tài khoản</div>
+                    </div>
+                    <i class="fa-regular fa-clone copy-icon"></i>
+                </div>
+                <div class="qr-side-btn" onclick="openQR('SPP', 'SHOPEE PAY')">
+                    <i class="fa-solid fa-qrcode"></i>
+                </div>
+            </div>
+
+            <!-- MoMo -->
+            <div class="bank-group">
+                <div class="bank-item-main" onclick="copyOnly('0981506719', 'Ví MoMo')">
+                    <div class="logo-wrapper">
+                        <img src="https://raw.githubusercontent.com/NgDanhThanhTrung/Bank/main/LOGO_MOMO.jpg" alt="MoMo">
+                    </div>
+                    <div class="bank-info">
+                        <span class="bank-tag">Ví MoMo</span>
+                        <div class="acc-status">Chạm để copy số tài khoản</div>
+                    </div>
+                    <i class="fa-regular fa-clone copy-icon"></i>
+                </div>
+                <div class="qr-side-btn" onclick="openQR('MOMO', 'VÍ MOMO')">
+                    <i class="fa-solid fa-qrcode"></i>
                 </div>
             </div>
         </div>
     </div>
+
     <script>
-        const toast = document.getElementById('toast');
-        const qrModal = document.getElementById('qrModal');
-        const qrImg = document.getElementById('qrImg');
-        const modalBank = document.getElementById('modalBank');
-        const downloadBtn = document.getElementById('downloadBtn');
+        // Cấu hình đồng hồ
+        function updateClock() {
+            const now = new Date();
+            const options = { timeZone: 'Asia/Ho_Chi_Minh' };
+            const vnTime = new Date(now.toLocaleString('en-US', options));
+            
+            const hour = String(vnTime.getHours()).padStart(2, '0');
+            const minute = String(vnTime.getMinutes()).padStart(2, '0');
+            const second = String(vnTime.getSeconds()).padStart(2, '0');
+            
+            document.getElementById('vTimeMain').textContent = `${hour}:${minute}`;
+            document.getElementById('vSeconds').textContent = second;
+            
+            const dateOptions = { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' };
+            document.getElementById('vDateFancy').textContent = vnTime.toLocaleDateString('vi-VN', dateOptions);
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Xử lý Copy
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        function copyOnly(text, label) {
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            showToast(`Đã chép số tài khoản ${label}`);
+        }
+
+        // Modal QR
         const qrLinks = {
             'MBV': 'https://raw.githubusercontent.com/NgDanhThanhTrung/Bank/main/QR_MBV.jpg',
             'MOMO': 'https://raw.githubusercontent.com/NgDanhThanhTrung/Bank/main/QR_MOMO.jpg',
@@ -410,116 +541,66 @@
             'SPP': 'https://raw.githubusercontent.com/NgDanhThanhTrung/Bank/main/QR_SPP.jpg',
             'ZLP': 'https://raw.githubusercontent.com/NgDanhThanhTrung/Bank/main/QR_ZLP.jpg'
         };
-        function showToast(msg) {
-            toast.innerText = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2000);
-        }
-        function copyToClipboard(text) {
-            const el = document.createElement('textarea');
-            el.value = text;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
-            document.body.removeChild(el);
-        }
-        function copyOnly(text, label) {
-            copyToClipboard(text);
-            showToast("Đã sao chép " + label);
-        }
+
         function openQR(key, name) {
-            const url = qrLinks[key];
-            if (url) {
-                qrImg.src = url;
-                modalBank.innerText = name;
-                qrModal.style.display = 'grid';
-                downloadBtn.onclick = async () => {
-                    try {
-                        showToast("Đang xử lý tải xuống...");
-                        const response = await fetch(url);
-                        const blob = await response.blob();
-                        const blobUrl = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = blobUrl;
-                        a.download = `QR_${key}.jpg`;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        window.URL.revokeObjectURL(blobUrl);
-                        showToast("Đã tải mã QR về máy!");
-                    } catch (error) {
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.target = '_blank';
-                        a.download = `QR_${key}.jpg`;
-                        a.click();
-                        showToast("Đã mở ảnh để tải xuống.");
-                    }
-                };
-                setTimeout(() => qrModal.classList.add('active'), 10);
-            }
+            const modal = document.getElementById('qrModal');
+            document.getElementById('qrImg').src = qrLinks[key];
+            document.getElementById('modalBank').innerText = name;
+            modal.style.display = 'grid';
+            
+            document.getElementById('downloadBtn').onclick = async () => {
+                try {
+                    const res = await fetch(qrLinks[key]);
+                    const blob = await res.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url; a.download = `QR_${key}.jpg`;
+                    a.click();
+                    showToast("Đang tải ảnh...");
+                } catch { window.open(qrLinks[key], '_blank'); }
+            };
         }
+
         function closeModal() {
-            qrModal.classList.remove('active');
-            setTimeout(() => {
-                qrModal.style.display = 'none';
-            }, 300);
+            document.getElementById('qrModal').style.display = 'none';
         }
+
+        // Particles
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
-        let particles = [];
-        let mouse = { x: null, y: null, radius: 120 };
-        window.addEventListener('mousemove', (e) => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-        });
+        let pts = [];
+
         function init() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            particles = [];
-            let density = canvas.width < 500 ? 25000 : 15000;
-            let numberOfParticles = (canvas.width * canvas.height) / density;
-            for (let i = 0; i < numberOfParticles; i++) {
-                particles.push({
+            pts = [];
+            for (let i = 0; i < 40; i++) {
+                pts.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
                     vx: (Math.random() - 0.5) * 0.4,
                     vy: (Math.random() - 0.5) * 0.4,
-                    r: Math.random() * 2 + 0.5
+                    r: Math.random() * 2
                 });
             }
         }
-        function draw() {
+
+        function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.x += p.vx;
-                p.y += p.vy;
-                if (mouse.x !== null) {
-                    let dx = mouse.x - p.x;
-                    let dy = mouse.y - p.y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < mouse.radius) {
-                        const force = (mouse.radius - distance) / mouse.radius;
-                        p.x -= (dx / distance) * force * 4;
-                        p.y -= (dy / distance) * force * 4;
-                    }
-                }
-                if(p.x < 0) p.x = canvas.width;
-                if(p.x > canvas.width) p.x = 0;
-                if(p.y < 0) p.y = canvas.height;
-                if(p.y > canvas.height) p.y = 0;
+            ctx.fillStyle = "rgba(0, 242, 254, 0.2)";
+            pts.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = "rgba(0, 242, 254, 0.15)";
                 ctx.fill();
             });
-            requestAnimationFrame(draw);
+            requestAnimationFrame(animate);
         }
+
         window.addEventListener('resize', init);
-        window.onload = function() {
-            init(); 
-            draw();
-        }
+        window.onload = () => { init(); animate(); };
     </script>
 </body>
 </html>
